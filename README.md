@@ -3,11 +3,28 @@ ASM68K and AS. What's the difference?
 # Directives
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
-```equ``` | ```equ``` or ```constant``` | Define a value once. Forward references allowed. | <pre lang="asm">label: equ 1+2+3</pre><pre lang="asm">constant label,1+2+3 ; AS only</pre>
+```equ``` | ```equ``` | Define a value once. Forward references allowed. | <pre lang="asm">label: equ 1+2+3</pre>
+|| ```constant``` | Same as ```equ``` with different syntax. | <pre lang="asm">constant label,1+2+3</pre>
 ```set``` or ```=``` | ```set``` or ```=``` | Define a reusable value. Forward references not allowed. | <pre lang="asm">label: = 1+2+3</pre>
-```equs``` | | Define a reusable string. Forward references not allowed.<br>Single or double quotes work. To include quotes in the string, use ```''``` where the quote should be. | <pre lang="asm">label: equs "string"</pre><pre lang="asm">label: equs 'string''s got a quote'</pre>
+```equs``` | | Define a reusable string. Forward references not allowed.<br>Single or double quotes work. To include quotes in the string, use ```''``` where the quote should be. | <pre lang="asm">label: equs "string"&#13;label2: equs 'it''s a nested quote'</pre>
 ```equr``` | ```reg``` | Define label to represent a register. | <pre lang="asm">label: equr d0</pre>
 ```reg``` | | Define label to represent a series of registers for use with ```movem```. | <pre lang="asm">label: reg d0-d7/a1-a2</pre>
-```rsset``` | ```phase``` and ```dephase``` | Sets the value of ```__rs```. | <pre lang="asm">rsset $FF0000</pre>
-```rs``` | | Assigns the value of ```__rs``` to a label, and advances ```__rs``` by the specified number of bytes, words or longwords. | <pre lang="asm">label: rs.l $10 ; label = $FF0000; __rs = $FF0010</pre>
-```rsreset``` | | Sets the value of ```__rs``` to 0. Used with a parameter, it behaves as ```rsset```. | <pre lang="asm">rsreset</pre>
+```rsset``` and ```rsreset``` | | Sets the value of ```__rs```. | <pre lang="asm">rsset $100&#13;rsreset ; __rs = 0</pre>
+```rs``` | | Assigns the value of ```__rs``` to a label, and advances ```__rs``` by the specified amount. | <pre lang="asm">rsset $100&#13;label: rs.l $10 ; label = $100; __rs = $110</pre>
+|| ```phase``` and ```dephase``` | Similar to ```rsset```. ```phase``` sets the current address, ```dephase``` returns to previous. | <pre lang="asm">phase $100&#13;dephase</pre>
+
+# Data
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```dc.b```, ```dc.w``` and ```dc.l``` |  | Writes a series of bytes, words or longwords. The automatic even option (```\ae```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
+```dcb``` |  | Writes a series of bytes, words or longwords of single value. | <pre lang="asm">dcb.b 5,1 ; same as dc.b 1,1,1,1,1</pre>
+```ds``` |||
+```hex``` |  | Writes a series of bytes. | <pre lang="asm">hex 010203 ; same as dc.b 1,2,3</pre>
+
+# Program counter control
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```org``` |  | Changes program counter to start writing anywhere.<br>Broken in ASM68K - always goes to 0. | <pre lang="asm">org $100 ; goto address $100</pre>
+```even``` |  | Align to word. | <pre lang="asm">dc.b 1,2,3&#13;even ; same as dc.b 1,2,3,0</pre>
+```cnop x,y``` |  | Align to ```y``` and append ```x``` bytes. ```x``` can be 0 but ```y``` cannot. | <pre lang="asm">cnop 2,16 ; align to 16 and append 2 bytes</pre>
+```obj``` and ```objend``` |  | Makes program counter believes it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>

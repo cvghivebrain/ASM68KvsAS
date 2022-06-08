@@ -27,4 +27,16 @@ ASM68K | AS | Purpose | Example
 ```org``` |  | Changes program counter to start writing anywhere.<br>Broken in ASM68K - always goes to 0. | <pre lang="asm">org $100 ; goto address $100</pre>
 ```even``` |  | Align to word. | <pre lang="asm">dc.b 1,2,3&#13;even ; same as dc.b 1,2,3,0</pre>
 ```cnop x,y``` |  | Align to ```y``` and append ```x``` bytes. ```x``` can be 0 but ```y``` cannot. | <pre lang="asm">cnop 2,16 ; align to 16 and append 2 bytes</pre>
-```obj``` and ```objend``` |  | Makes program counter believes it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
+```obj``` and ```objend``` |  | Makes program counter believe it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
+
+# Files
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```include``` |  | Include an ASM file. | <pre lang="asm">include "file.asm"</pre>
+```incbin``` | binclude | Include a binary file. | <pre lang="asm">incbin "file.bin"&#13;incbin "file.bin",$10 ; start at address $10 in file&#13;incbin "file.bin",$10,$20 ; start at address $10, include only $20 bytes</pre>
+
+# Functions
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```ref(x)``` |  | Returns _true_ if label ```x``` has been previously encountered. | <pre lang="asm">if ref(label) ; false on first run, true on second&#13;label: rts&#13;endif</pre>
+```def(x)``` |  | Returns _true_ if label ```x``` has been defined. | <pre lang="asm">label: equ 1&#13;if def(label) ; true</pre>

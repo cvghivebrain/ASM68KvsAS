@@ -29,11 +29,21 @@ ASM68K | AS | Purpose | Example
 ```cnop x,y``` |  | Align to ```y``` and append ```x``` bytes. ```x``` can be 0 but ```y``` cannot. | <pre lang="asm">cnop 2,16 ; align to 16 and append 2 bytes</pre>
 ```obj``` and ```objend``` |  | Makes program counter believe it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
 
+# Conditionals
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```if```, ```elseif```, ```else``` and ```endif```/```endc``` |  | Assemble different code depending on specified conditions. ```endif``` and ```endc``` are interchangeable. | <pre lang="asm">if var=0&#13;dc.b 'var is 0'&#13;elseif var=1&#13;dc.b 'var is 1'&#13;else&#13;dc.b 'var is something else'&#13;endc</pre>
+```case``` and ```endcase``` |  | Alternative to ```if```. Seems broken in ASM68K. | <pre lang="asm">case var&#13;=0&#13;dc.b 'var is 0'&#13;=1&#13;dc.b 'var is 1'&#13;=?&#13;dc.b 'var is something else'&#13;endcase</pre>
+```rept x``` and ```endr``` |  | Assembles code ```x``` number of times. Useful in combination with ```narg``` in macros. | <pre lang="asm">rept 3&#13;dc.b 0 ; same as dc.b 0,0,0&#13;endr</pre>
+```while``` and ```endw``` |  | Assembles code repeatedly while condition is met.<br>```equs``` does not work inside a ```while``` loop. | <pre lang="asm">var: = 0&#13;while var<3&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;endw</pre>
+```do``` and ```until``` |  | Assembles code repeatedly until condition is met. | <pre lang="asm">var: = 0&#13;do&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;until var>2</pre>
+```end``` |  | Stops assembly. Place at the end of the main ASM file. | 
+
 # Files
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
 ```include``` |  | Include an ASM file. | <pre lang="asm">include "file.asm"</pre>
-```incbin``` | binclude | Include a binary file. | <pre lang="asm">incbin "file.bin"&#13;incbin "file.bin",$10 ; start at address $10 in file&#13;incbin "file.bin",$10,$20 ; start at address $10, include only $20 bytes</pre>
+```incbin``` | ```binclude``` | Include a binary file. | <pre lang="asm">incbin "file.bin"&#13;incbin "file.bin",$10 ; start at address $10 in file&#13;incbin "file.bin",$10,$20 ; start at address $10, include only $20 bytes</pre>
 
 # Functions
 ASM68K | AS | Purpose | Example

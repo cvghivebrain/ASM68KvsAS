@@ -16,7 +16,7 @@ ASM68K | AS | Purpose | Example
 # Data
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
-```dc.b```, ```dc.w``` and ```dc.l``` |  | Writes a series of bytes, words or longwords. The automatic even option (```\ae```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
+```dc.b```, ```dc.w``` and ```dc.l``` |  | Writes a series of bytes, words or longwords. The automatic even option (```ae+```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
 ```dcb``` |  | Writes a series of bytes, words or longwords of single value. | <pre lang="asm">dcb.b 5,1 ; same as dc.b 1,1,1,1,1</pre>
 ```ds``` |||
 ```hex``` |  | Writes a series of bytes. | <pre lang="asm">hex 010203 ; same as dc.b 1,2,3</pre>
@@ -49,7 +49,7 @@ ASM68K | AS | Purpose | Example
 ```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
 ```\#``` and ```\$``` |  | Value of variable output as a string. | 
 ```\_``` |  | All parameters, including the commas. | 
-```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;\\*: equ *&#13;self: equ \\*&#13;endm&#13;readself ; same as self: equ *</pre>
+```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
 ```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
 ```shift``` |  | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
 ```pushp``` and ```popp``` |  |  | 
@@ -59,7 +59,7 @@ ASM68K | AS | Purpose | Example
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
 ```include``` |  | Include an ASM file. | <pre lang="asm">include "file.asm"</pre>
-```incbin``` | ```binclude``` | Include a binary file. | <pre lang="asm">incbin "file.bin"&#13;incbin "file.bin",$10 ; start at address $10 in file&#13;incbin "file.bin",$10,$20 ; start at address $10, include only $20 bytes</pre>
+```incbin``` | ```binclude``` | Include a binary file. | <pre lang="asm">incbin "file.bin"&#13;incbin "file.bin",$10 ; start at address $10 in file&#13;incbin "file.bin",$10,$20 ; start at $10, include only $20 bytes</pre>
 
 # Functions
 ASM68K | AS | Purpose | Example
@@ -69,3 +69,5 @@ ASM68K | AS | Purpose | Example
 ```type(x)``` |  | Returns info on label ```x``` as a word bitfield. | 
 ```strlen(x)``` |  | Returns length of string ```x```. | <pre lang="asm">if strlen("text")=4 ; true&#13;label: equs "four"&#13;if strlen(label)=4 ; true</pre>
 ```strcmp(x,y)``` |  | Returns _true_ if string ```x``` matches string ```y```. Variables require quotes and backslash. | <pre lang="asm">label: equs "text"&#13;if strcmp("\label","text") ; true</pre>
+```instr(x,y)``` and ```instr(s,x,y)``` |  | Returns position of substring ```y``` in string ```x``` (starts at 1). Returns 0 if not found. ```s``` specifies starting position. | <pre lang="asm">label: equs "string"&#13;dc.b instr("\label","r") ; 3&#13;dc.b instr(2,"\label","r") ; 3&#13;dc.b instr(4,"\label","r") ; 0</pre>
+```substr``` |  | Assigns substring to variable. Actually more like a macro than a function. Its parameters are start, end (both optional) and string. | <pre lang="asm">label: equs "string"&#13;sub1: substr 2,5,"\label" ; sub1 = trin&#13;sub2: substr 2,,"\label" ; sub2 = tring&#13;sub3: substr ,5,"\label" ; sub3 = strin&#13;sub4: substr ,,"\label" ; sub4 = string</pre>

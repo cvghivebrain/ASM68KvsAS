@@ -49,7 +49,7 @@ ASM68K | AS | Purpose | Example
 ```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
 ```\#``` and ```\$``` |  | Value of variable output as a string. | 
 ```\_``` |  | All parameters, including the commas. | 
-```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;\*: equ *&#13;self: equ \*&#13;endm&#13;readself ; same as self: equ *</pre>
+```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;\\*: equ *&#13;self: equ \\*&#13;endm&#13;readself ; same as self: equ *</pre>
 ```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
 ```shift``` |  | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
 ```pushp``` and ```popp``` |  |  | 
@@ -67,3 +67,5 @@ ASM68K | AS | Purpose | Example
 ```ref(x)``` |  | Returns _true_ if label ```x``` has been previously encountered. | <pre lang="asm">if ref(label) ; false on first run, true on second&#13;label: rts&#13;endif</pre>
 ```def(x)``` |  | Returns _true_ if label ```x``` has been defined. | <pre lang="asm">label: equ 1&#13;if def(label) ; true</pre>
 ```type(x)``` |  | Returns info on label ```x``` as a word bitfield. | 
+```strlen(x)``` |  | Returns length of string ```x```. | <pre lang="asm">if strlen("text")=4 ; true&#13;label: equs "four"&#13;if strlen(label)=4 ; true</pre>
+```strcmp(x,y)``` |  | Returns _true_ if string ```x``` matches string ```y```. Variables require quotes and backslash. | <pre lang="asm">label: equs "text"&#13;if strcmp("\label","text") ; true</pre>

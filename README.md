@@ -39,6 +39,22 @@ ASM68K | AS | Purpose | Example
 ```do``` and ```until``` |  | Assembles code repeatedly until condition is met. | <pre lang="asm">var: = 0&#13;do&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;until var>2</pre>
 ```end``` |  | Stops assembly. Place at the end of the main ASM file. | 
 
+# Macros
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```macro``` and ```endm``` |  | Defines a macro. Parameters can be named or left blank (in which case they are referenced by ```\1```, ```\2``` etc.| <pre lang="asm">writebyte: macro num&#13;dc.b \num&#13;endm&#13;writebyte 5 ; same as dc.b 5</pre>
+```macros``` |  | Single-line macro. ```endm``` not needed. | <pre lang="asm">writebyte: macros&#13;dc.b \1</pre>
+```mexit``` |  | Exits macro prematurely. | 
+```\0``` |  | Size parameter. Whatever is after the ```.``` when a macro is used, usually ```b```, ```w``` or ```l``` but can be anything. | <pre lang="asm">writeany: macro&#13;dc.\0 \1&#13;endm&#13;writeany.l 999 ; same as dc.l 999</pre>
+```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
+```\#``` and ```\$``` |  | Value of variable output as a string. | 
+```\_``` |  | All parameters, including the commas. | 
+```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;\*: equ *&#13;self: equ \*&#13;endm&#13;readself ; same as self: equ *</pre>
+```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
+```shift``` |  | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
+```pushp``` and ```popp``` |  |  | 
+```purge``` |  |  | 
+
 # Files
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
@@ -50,3 +66,4 @@ ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
 ```ref(x)``` |  | Returns _true_ if label ```x``` has been previously encountered. | <pre lang="asm">if ref(label) ; false on first run, true on second&#13;label: rts&#13;endif</pre>
 ```def(x)``` |  | Returns _true_ if label ```x``` has been defined. | <pre lang="asm">label: equ 1&#13;if def(label) ; true</pre>
+```type(x)``` |  | Returns info on label ```x``` as a word bitfield. | 

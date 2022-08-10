@@ -49,7 +49,7 @@ ASM68K | AS | Purpose | Example
 ```mexit``` |  | Exits macro prematurely. | 
 ```\0``` |  | Size parameter. Whatever is after the ```.``` when a macro is used, usually ```b```, ```w``` or ```l``` but can be anything. | <pre lang="asm">writeany: macro&#13;dc.\0 \1&#13;endm&#13;writeany.l 999 ; same as dc.l 999</pre>
 ```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
-```\#``` and ```\$``` |  | Value of variable output as a string. ```\#``` is decimal and ```\$``` is hex. | <pre lang="asm">value: equ 5&#13;string: equs "\#value" ; same as string: equs "5"</pre>
+```\#``` and ```\$``` |  | Value of variable output as a string. ```\#``` is decimal and ```\$``` is hex. | <pre lang="asm">value: equ 5&#13;string: equs "\\#value" ; same as string: equs "5"</pre>
 ```\_``` |  | All parameters, including the commas. | 
 ```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. Label must be on the same line. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
 ```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
@@ -73,3 +73,25 @@ ASM68K | AS | Purpose | Example
 ```strcmp(x,y)``` |  | Returns _true_ if string ```x``` matches string ```y```. Variables require quotes and backslash. | <pre lang="asm">label: equs "text"&#13;if strcmp("\label","text") ; true</pre>
 ```instr(x,y)``` and ```instr(s,x,y)``` |  | Returns position of substring ```y``` in string ```x``` (starts at 1). Returns 0 if not found. ```s``` specifies starting position. | <pre lang="asm">label: equs "string"&#13;dc.b instr("\label","r") ; 3&#13;dc.b instr(2,"\label","r") ; 3&#13;dc.b instr(4,"\label","r") ; 0</pre>
 ```substr``` |  | Assigns substring to variable. Actually more like a macro than a function. Its parameters are start, end (both optional) and string. | <pre lang="asm">label: equs "string"&#13;sub1: substr 2,5,"\label" ; sub1 = trin&#13;sub2: substr 2,,"\label" ; sub2 = tring&#13;sub3: substr ,5,"\label" ; sub3 = strin&#13;sub4: substr ,,"\label" ; sub4 = string</pre>
+
+# Options
+ASM68K | AS | Purpose | Example
+--- | --- | --- | ---
+```opt``` |  | Sets an option. ```+``` enables and option and ```-``` disables it. | 
+```opt ae+``` |  | Enable automatic even before ```dc.w```, ```dc.l``` and similar. | 
+```opt an+``` |  | Enable alternative numbers. i.e. those in Z80 assembly (100h, 0Ah). | 
+```opt c+``` |  | Enable case sensitivity. ```c-``` is default. | 
+```opt d+``` |  | Descope local labels? ```d-``` is default. | 
+```opt e+``` |  | Error text in command line output. | 
+```opt lx``` |  | Set local label prefix to ```x```. ```@``` is default. | 
+```opt w+``` |  | Warning text in command line output. | 
+```opt ws+``` |  | Allow whitespace in instructions (e.g. ```1 + 2```). ```ws-``` is default. | 
+```opt op+``` |  | Optimise ```(pc)``` relative from long addressing if possible. ```op-``` is default. | 
+```opt os+``` |  | Optimise branches if possible. ```os-``` is default. | 
+```opt ow+``` |  | Optimise longwords to words if possible. ```ow-``` is default. | 
+```opt oz+``` |  | Optimise ```0(a0)``` to ```(a0)```. ```oz-``` is default. | 
+```opt oaq+```, ```osq+``` and ```omq+``` |  | Optimise ```add```, ```sub``` and ```move``` to ```addq```, ```subq``` and ```moveq``` if possible. ```oaq-```, ```osq-``` and ```omq-``` are default. | 
+```pusho``` and ```popo``` |  | Save and restore options, allowing for temporary options to be used. | 
+```nolist``` and ```list``` |  | Disable and enable list generation temporarily. | 
+```inform``` |  |  |
+```fail``` |  |  |

@@ -12,14 +12,16 @@ ASM68K | AS | Purpose | Example
 ```rsset``` and ```rsreset``` | | Sets the value of ```__rs```. | <pre lang="asm">rsset $100&#13;rsreset ; __rs = 0</pre>
 ```rs``` | | Assigns the value of ```__rs``` to a label, and advances ```__rs``` by the specified amount. | <pre lang="asm">rsset $100&#13;label: rs.l $10 ; label = $100; __rs = $110</pre>
 || ```phase``` and ```dephase``` | Similar to ```rsset```. ```phase``` sets the current address, ```dephase``` returns to previous. | <pre lang="asm">phase $100&#13;dephase</pre>
+```alias``` and ```disable``` |  | Change the names of constants and functions, allowing them to be redefined. | <pre lang="asm">sqrtnew: alias sqrt&#13;disable sqrt</pre>
 
 # Data
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
 ```dc.b```, ```dc.w``` and ```dc.l``` |  | Writes a series of bytes, words or longwords. The automatic even option (```ae+```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
 ```dcb``` |  | Writes a series of bytes, words or longwords of single value. | <pre lang="asm">dcb.b 5,1 ; same as dc.b 1,1,1,1,1</pre>
-```ds``` |||
+```ds``` |  | Writes a series of bytes, words or longwords of value 0. | <pre lang="asm">ds.b 5 ; same as dc.b 0,0,0,0,0</pre>
 ```hex``` |  | Writes a series of bytes. | <pre lang="asm">hex 010203 ; same as dc.b 1,2,3</pre>
+```datasize``` and ```data``` |  | Writes a series of bytes with padding. ```datasize``` can be 1 to 256. | <pre lang="asm">datasize 4&#13;data 1,2 ; same as dc.l 1,2</pre>
 
 # Program counter control
 ASM68K | AS | Purpose | Example
@@ -47,13 +49,13 @@ ASM68K | AS | Purpose | Example
 ```mexit``` |  | Exits macro prematurely. | 
 ```\0``` |  | Size parameter. Whatever is after the ```.``` when a macro is used, usually ```b```, ```w``` or ```l``` but can be anything. | <pre lang="asm">writeany: macro&#13;dc.\0 \1&#13;endm&#13;writeany.l 999 ; same as dc.l 999</pre>
 ```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
-```\#``` and ```\$``` |  | Value of variable output as a string. | 
+```\#``` and ```\$``` |  | Value of variable output as a string. ```\#``` is decimal and ```\$``` is hex. | <pre lang="asm">value: equ 5&#13;string: equs "\#value" ; same as string: equs "5"</pre>
 ```\_``` |  | All parameters, including the commas. | 
-```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
+```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. Label must be on the same line. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
 ```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
 ```shift``` |  | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
 ```pushp``` and ```popp``` |  |  | 
-```purge``` |  |  | 
+```purge``` |  | Deletes a macro. | <pre lang="asm">purge macroname</pre>
 
 # Files
 ASM68K | AS | Purpose | Example

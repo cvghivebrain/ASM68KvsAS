@@ -69,10 +69,23 @@ ASM68K | AS | Purpose | Example
 ```ref(x)``` |  | Returns _true_ if label ```x``` has been previously encountered. | <pre lang="asm">if ref(label) ; false on first run, true on second&#13;label: rts&#13;endif</pre>
 ```def(x)``` |  | Returns _true_ if label ```x``` has been defined. | <pre lang="asm">label: equ 1&#13;if def(label) ; true</pre>
 ```type(x)``` |  | Returns info on label ```x``` as a word bitfield. | 
-```strlen(x)``` |  | Returns length of string ```x```. | <pre lang="asm">if strlen("text")=4 ; true&#13;label: equs "four"&#13;if strlen(label)=4 ; true</pre>
+```strlen(x)``` | ```strlen(x)``` | Returns length of string ```x```. | <pre lang="asm">if strlen("text")=4 ; true&#13;label: equs "four"&#13;if strlen(label)=4 ; true</pre>
 ```strcmp(x,y)``` |  | Returns _true_ if string ```x``` matches string ```y```. Variables require quotes and backslash. | <pre lang="asm">label: equs "text"&#13;if strcmp("\label","text") ; true</pre>
 ```instr(x,y)``` and ```instr(s,x,y)``` |  | Returns position of substring ```y``` in string ```x``` (starts at 1). Returns 0 if not found. ```s``` specifies starting position. | <pre lang="asm">label: equs "string"&#13;dc.b instr("\label","r") ; 3&#13;dc.b instr(2,"\label","r") ; 3&#13;dc.b instr(4,"\label","r") ; 0</pre>
 ```substr``` |  | Assigns substring to variable. Actually more like a macro than a function. Its parameters are start, end (both optional) and string. | <pre lang="asm">label: equs "string"&#13;sub1: substr 2,5,"\label" ; sub1 = trin&#13;sub2: substr 2,,"\label" ; sub2 = tring&#13;sub3: substr ,5,"\label" ; sub3 = strin&#13;sub4: substr ,,"\label" ; sub4 = string</pre>
+|| ```bitcnt(x)``` | Returns count of bits set in ```x```. | 
+|| ```firstbit(x)``` | Returns number of the lowest bit set in ```x```, or -1 if not found. | 
+|| ```lastbit(x)``` | Returns number of the highest bit set in ```x```, or -1 if not found. | 
+|| ```bitpos(x)``` | Returns number of the (only) bit set in ```x```, or fails assembly if not found. | 
+|| ```sgn(x)``` | Returns 0, 1 or -1 if ```x``` is 0, positive or negative respectively. | 
+|| ```abs(x)``` | Returns absolute value of ```x```. | 
+|| ```upstring(x)``` | Returns uppercase equivalent of ```x```. ```upstring("x")``` returns ```X```. | 
+|| ```lowstring(x)``` | Returns lowercase equivalent of ```x```. | 
+|| ```substr(x,y,z)``` | Returns substring of ```x```, starting at position ```y``` and of length ```z```. | 
+|| ```charfromstr(x,y)``` | Returns the character in ```x``` at position ```y```. | 
+|| ```strstr(x,y)``` | Returns position of substring ```y``` in string ```x``` (starts at 0). Returns -1 if not found. Similar to ASM68K's ```instr()```. | 
+|| ```val(x)``` | Converts ```x``` from string to expression. | <pre lang="asm">dc.b val("1+1") ; same as dc.b 2</pre>
+|| ```exprtype(x)``` | Returns type of ```x``` &mdash; 0 for integer, 1 for floating (not relevant here) and 2 for string. Similar to ASM68K's ```type()```. | 
 
 # Options
 ASM68K | AS | Purpose | Example
@@ -93,5 +106,5 @@ ASM68K | AS | Purpose | Example
 ```opt oaq+```, ```osq+``` and ```omq+``` |  | Optimise ```add```, ```sub``` and ```move``` to ```addq```, ```subq``` and ```moveq``` if possible. ```oaq-```, ```osq-``` and ```omq-``` are default. | 
 ```pusho``` and ```popo``` |  | Save and restore options, allowing for temporary options to be used. | 
 ```nolist``` and ```list``` |  | Disable and enable list generation temporarily. | 
-```inform``` |  |  |
-```fail``` |  |  |
+```inform x,y,z``` |  | Outputs the error message ```y``` to command line. ```x``` can be 0 (show text only), 1 (text as warning), 2 (text as error) or 3 (stops assembly). ```y``` can contain ```%d``` (decimal), ```%h``` (hex) or ```%s``` (string) which are substituted by expression ```z```. | if value>max&#13;inform 3,"Value $%h is too high.",value&#13;endc
+```fail``` |  | Stops assembly. |

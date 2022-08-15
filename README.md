@@ -13,23 +13,31 @@ ASM68K | AS | Purpose | Example
 ```rs``` | | Assigns the value of ```__rs``` to a label, and advances ```__rs``` by the specified amount. | <pre lang="asm">rsset $100&#13;label: rs.l $10 ; label = $100; __rs = $110</pre>
 || ```phase``` and ```dephase``` | Similar to ```rsset```. ```phase``` sets the current address, ```dephase``` returns to previous. | <pre lang="asm">phase $100&#13;dephase</pre>
 ```alias``` and ```disable``` |  | Change the names of constants and functions, allowing them to be redefined. | <pre lang="asm">sqrtnew: alias sqrt&#13;disable sqrt</pre>
+|| ```charset``` | Redefine the value of an ASCII character. Use without parameters to reset all characters to default. | <pre lang="asm">charset 'a',255 ; a = $FF&#13;charset ; a = $61</pre>
+|| ```codepage``` | Switch between named ASCII character sets. ```STANDARD``` is default. | <pre lang="asm">codepage new&#13;charset 'a',255 ; a = $FF&#13;codepage STANDARD ; a = $61</pre>
+|| ```enum``` and ```nextenum``` | Define a series of values which increment. Starts at 0 unless specified. ```nextenum``` continues the same series on another line. | <pre lang="asm">enum x,y,z&#13;dc.b x,y,z ; same as dc.b 0,1,2</pre>
+|| ```enumconf``` | Change the increment for ```enum```. | <pre lang="asm">enumconf 2&#13;enum x=2,y,z&#13;dc.b x,y,z ; same as dc.b 2,4,6</pre>
+|| ```save``` and ```restore``` | Saves current ```cpu```, ```codepage``` and other things. | 
 
 # Data
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
-```dc.b```, ```dc.w``` and ```dc.l``` |  | Writes a series of bytes, words or longwords. The automatic even option (```ae+```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
+```dc.b```, ```dc.w``` and ```dc.l``` | ```dc``` | Writes a series of bytes, words or longwords. In ASM68K, the automatic even option (```ae+```) ensures words and longwords are aligned to word. | <pre lang="asm">dc.b 1,$20,-$30</pre>
 ```dcb``` |  | Writes a series of bytes, words or longwords of single value. | <pre lang="asm">dcb.b 5,1 ; same as dc.b 1,1,1,1,1</pre>
-```ds``` |  | Writes a series of bytes, words or longwords of value 0. | <pre lang="asm">ds.b 5 ; same as dc.b 0,0,0,0,0</pre>
+```ds``` | ```ds``` | Writes a series of bytes, words or longwords of value 0. | <pre lang="asm">ds.b 5 ; same as dc.b 0,0,0,0,0</pre>
 ```hex``` |  | Writes a series of bytes. | <pre lang="asm">hex 010203 ; same as dc.b 1,2,3</pre>
 ```datasize``` and ```data``` |  | Writes a series of bytes with padding. ```datasize``` can be 1 to 256. | <pre lang="asm">datasize 4&#13;data 1,2 ; same as dc.l 1,2</pre>
 
 # Program counter control
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
-```org``` |  | Changes program counter to start writing anywhere.<br>Broken in ASM68K - always goes to 0. | <pre lang="asm">org $100 ; goto address $100</pre>
+```org``` | ```org``` | Changes program counter to start writing anywhere.<br>Broken in ASM68K - always goes to 0. | <pre lang="asm">org $100 ; goto address $100</pre>
+|| ```rorg``` | Add value to program counter. Can be negative. | <pre lang="asm">rorg $100 ; goto *+$100</pre>
 ```even``` |  | Align to word. | <pre lang="asm">dc.b 1,2,3&#13;even ; same as dc.b 1,2,3,0</pre>
+|| ```padding``` | Always align to word when turned ```on```. | <pre lang="asm">padding on&#13;padding off</pre>
 ```cnop x,y``` |  | Align to ```y``` and append ```x``` bytes. ```x``` can be 0 but ```y``` cannot. | <pre lang="asm">cnop 2,16 ; align to 16 and append 2 bytes</pre>
 ```obj``` and ```objend``` |  | Makes program counter believe it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
+|| ```align``` | Align to value. | <pre lang="asm">dc.b 1,2,3&#13;align 2 ; same as dc.b 1,2,3,0</pre>
 
 # Conditionals
 ASM68K | AS | Purpose | Example

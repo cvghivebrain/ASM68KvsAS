@@ -69,7 +69,7 @@ ASM68K | AS | Purpose | Example
 ```\#``` and ```\$``` |  | Value of variable output as a string. ```\#``` is decimal and ```\$``` is hex. | <pre lang="asm">value: equ 5&#13;string: equs "\\#value" ; same as string: equs "5"</pre>
 ```\_``` | ```ALLARGS``` | All parameters, including the commas. | 
 ```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. Label must be on the same line. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
-|| ```{INTLABEL}``` and ```__LABEL__``` | Value of label where macro was used. ```{INTLABEL}``` must be the last parameter. Label must be on the same line. | <pre lang="asm">readself: macro {INTLABEL}&#13;self: equ __LABEL__&#13;endm&#13;readself ; same as self: equ *</pre>
+|| ```{INTLABEL}``` and ```__LABEL__``` | Value of label where macro was used. ```{INTLABEL}``` must be the last parameter. Label must be on the same line. | <pre lang="asm">readself: macro {INTLABEL}&#13;self: equ \_\_LABEL\_\_&#13;endm&#13;readself ; same as self: equ *</pre>
 ```narg``` | ```ARGCOUNT``` | Number of parameters used in a macro. AS will include all named parameters, even if they aren't used. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
 ```shift``` | ```shift``` | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
 ```pushp``` and ```popp``` |  |  | 

@@ -42,28 +42,40 @@ ASM68K | AS | Purpose | Example
 # Conditionals
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
-```if```, ```elseif```, ```else``` and ```endif```/```endc``` |  | Assemble different code depending on specified conditions. ```endif``` and ```endc``` are interchangeable. | <pre lang="asm">if var=0&#13;dc.b 'var is 0'&#13;elseif var=1&#13;dc.b 'var is 1'&#13;else&#13;dc.b 'var is something else'&#13;endc</pre>
+```if```, ```elseif```, ```else``` and ```endif```/```endc``` | ```if```, ```elseif```, ```else``` and ```endif``` | Assemble different code depending on specified conditions. ```endif``` and ```endc``` are interchangeable. | <pre lang="asm">if var=0&#13;dc.b 'var is 0'&#13;elseif var=1&#13;dc.b 'var is 1'&#13;else&#13;dc.b 'var is something else'&#13;endc</pre>
 ```case``` and ```endcase``` |  | Alternative to ```if```. Seems broken in ASM68K. | <pre lang="asm">case var&#13;=0&#13;dc.b 'var is 0'&#13;=1&#13;dc.b 'var is 1'&#13;=?&#13;dc.b 'var is something else'&#13;endcase</pre>
-```rept x``` and ```endr``` |  | Assembles code ```x``` number of times. Useful in combination with ```narg``` in macros. | <pre lang="asm">rept 3&#13;dc.b 0 ; same as dc.b 0,0,0&#13;endr</pre>
-```while``` and ```endw``` |  | Assembles code repeatedly while condition is met.<br>```equs``` does not work inside a ```while``` loop. | <pre lang="asm">var: = 0&#13;while var<3&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;endw</pre>
+|| ```switch```, ```case```, ```elsecase``` and ```endcase``` | Alternative to ```if```. | <pre lang="asm">switch var&#13;case 0&#13;dc.b 'var is 0'&#13;case 1&#13;dc.b 'var is 1'&#13;elsecase&#13;dc.b 'var is something else'&#13;endcase</pre>
+```rept x``` and ```endr``` | ```rept x``` and ```endm``` | Assembles code ```x``` number of times. Useful in combination with ```narg``` in macros. | <pre lang="asm">rept 3&#13;dc.b 0 ; same as dc.b 0,0,0&#13;endr</pre>
+```while``` and ```endw``` | ```while``` and ```endm``` | Assembles code repeatedly while condition is met.<br>```equs``` does not work inside a ```while``` loop. | <pre lang="asm">var: = 0&#13;while var<3&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;endw</pre>
 ```do``` and ```until``` |  | Assembles code repeatedly until condition is met. | <pre lang="asm">var: = 0&#13;do&#13;dc.b var ; same as dc.b 0,1,2&#13;var: = var+1&#13;until var>2</pre>
 ```end``` |  | Stops assembly. Place at the end of the main ASM file. | 
+|| ```ifdef x``` | True if ```x``` is defined. | 
+|| ```ifndef x``` | True if ```x``` is undefined. | 
+|| ```ifused x``` | True if ```x``` is referenced in the code (so far). | 
+|| ```ifnused x``` | True if ```x``` is unreferenced in the code (so far). | 
+|| ```ifexist x``` | True if file ```x``` exists. | 
+|| ```ifnexist x``` | True if file ```x``` doesn't exist. | 
+|| ```ifb x,..,y``` | True if listed parameters are all blank. | 
+|| ```ifnb x,..,y``` | True if listed parameters aren't all blank. | 
 
 # Macros
 ASM68K | AS | Purpose | Example
 --- | --- | --- | ---
 ```macro``` and ```endm``` |  | Defines a macro. Parameters can be named or left blank (in which case they are referenced by ```\1```, ```\2``` etc.| <pre lang="asm">writebyte: macro num&#13;dc.b \num&#13;endm&#13;writebyte 5 ; same as dc.b 5</pre>
 ```macros``` |  | Single-line macro. ```endm``` not needed. | <pre lang="asm">writebyte: macros&#13;dc.b \1</pre>
-```mexit``` |  | Exits macro prematurely. | 
-```\0``` |  | Size parameter. Whatever is after the ```.``` when a macro is used, usually ```b```, ```w``` or ```l``` but can be anything. | <pre lang="asm">writeany: macro&#13;dc.\0 \1&#13;endm&#13;writeany.l 999 ; same as dc.l 999</pre>
+```mexit``` | ```exitm``` | Exits macro prematurely. | 
+```\0``` | ```ATTRIBUTE``` | Size parameter. Whatever is after the ```.``` when a macro is used, usually ```b```, ```w``` or ```l``` but can be anything. | <pre lang="asm">writeany: macro&#13;dc.\0 \1&#13;endm&#13;writeany.l 999 ; same as dc.l 999</pre>
 ```\@``` |  | Underscore followed by the number of times the macro has been used. Useful for creating unique labels. | <pre lang="asm">setvalue: macro&#13;value\\@: equ \1&#13;endm&#13;setvalue 5 ; same as value_1: equ 5</pre>
 ```\#``` and ```\$``` |  | Value of variable output as a string. ```\#``` is decimal and ```\$``` is hex. | <pre lang="asm">value: equ 5&#13;string: equs "\\#value" ; same as string: equs "5"</pre>
-```\_``` |  | All parameters, including the commas. | 
+```\_``` | ```ALLARGS``` | All parameters, including the commas. | 
 ```\*``` |  | Value of label where macro was used. ```*``` must be the first parameter, and ```\*``` must be defined. Label must be on the same line. | <pre lang="asm">readself: macro *&#13;&#92;\*: equ *&#13;self: equ &#92;\*&#13;endm&#13;readself ; same as self: equ *</pre>
-```narg``` |  | Number of parameters used in a macro. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
-```shift``` |  | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
+|| ```{INTLABEL}``` and ```__LABEL__``` | Value of label where macro was used. ```{INTLABEL}``` must be the last parameter. Label must be on the same line. | <pre lang="asm">readself: macro {INTLABEL}&#13;self: equ __LABEL__&#13;endm&#13;readself ; same as self: equ *</pre>
+```narg``` | ```ARGCOUNT``` | Number of parameters used in a macro. AS will include all named parameters, even if they aren't used. | <pre lang="asm">nargout: macro&#13;dc.b narg&#13;endm&#13;nargout 1,2,3,4 ; same as dc.b 4</pre>
+```shift``` | ```shift``` | Deletes the first parameter and moves the rest left. Useful in combination with ```narg```. | 
 ```pushp``` and ```popp``` |  |  | 
 ```purge``` |  | Deletes a macro. | <pre lang="asm">purge macroname</pre>
+|| ```!``` | AS allows redefining any instruction with macros. ```!``` uses the original unaltered instruction. | <pre lang="asm">move macro&#13;endm&#13;!move.b d0,d1</pre>
+|| ```function``` | Custom function. Last parameter is the expression, all parameters before that are the function's parameters. | <pre lang="asm">times2: function x,x+x&#13;dc.b times2(4) ; same as dc.b 8</pre>
 
 # Files
 ASM68K | AS | Purpose | Example
@@ -115,4 +127,6 @@ ASM68K | AS | Purpose | Example
 ```pusho``` and ```popo``` |  | Save and restore options, allowing for temporary options to be used. | 
 ```nolist``` and ```list``` |  | Disable and enable list generation temporarily. | 
 ```inform x,y,z``` |  | Outputs the error message ```y``` to command line. ```x``` can be 0 (show text only), 1 (text as warning), 2 (text as error) or 3 (stops assembly). ```y``` can contain ```%d``` (decimal), ```%h``` (hex) or ```%s``` (string) which are substituted by expression ```z```. | if value>max&#13;inform 3,"Value $%h is too high.",value&#13;endc
+|| ```message x``` and ```warning x``` | Outputs the message ```x``` to command line. | 
+|| ```error x``` and ```fatal x``` | Outputs the message ```x``` to command line and stops assembly. | 
 ```fail``` |  | Stops assembly. |

@@ -11,7 +11,6 @@ ASM68K | AS | Purpose | Example
 ```reg``` | | Define label to represent a series of registers for use with ```movem```. | <pre lang="asm">label: reg d0-d7/a1-a2</pre>
 ```rsset``` and ```rsreset``` | | Sets the value of ```__rs```. | <pre lang="asm">rsset $100&#13;rsreset ; __rs = 0</pre>
 ```rs``` | | Assigns the value of ```__rs``` to a label, and advances ```__rs``` by the specified amount. | <pre lang="asm">rsset $100&#13;label: rs.l $10 ; label = $100; __rs = $110</pre>
-|| ```phase``` and ```dephase``` | Similar to ```rsset```. ```phase``` sets the current address, ```dephase``` returns to previous. | <pre lang="asm">phase $100&#13;dephase</pre>
 ```alias``` and ```disable``` |  | Change the names of constants and functions, allowing them to be redefined. | <pre lang="asm">sqrtnew: alias sqrt&#13;disable sqrt</pre>
 || ```charset``` | Redefine the value of an ASCII character. Use without parameters to reset all characters to default. | <pre lang="asm">charset 'a',255 ; a = $FF&#13;charset ; a = $61</pre>
 || ```codepage``` | Switch between named ASCII character sets. ```STANDARD``` is default. | <pre lang="asm">codepage new&#13;charset 'a',255 ; a = $FF&#13;codepage STANDARD ; a = $61</pre>
@@ -36,7 +35,7 @@ ASM68K | AS | Purpose | Example
 ```even``` |  | Align to word. | <pre lang="asm">dc.b 1,2,3&#13;even ; same as dc.b 1,2,3,0</pre>
 || ```padding``` | Always align to word when turned ```on```. | <pre lang="asm">padding on&#13;padding off</pre>
 ```cnop x,y``` |  | Align to ```y``` and append ```x``` bytes. ```x``` can be 0 but ```y``` cannot. | <pre lang="asm">cnop 2,16 ; align to 16 and append 2 bytes</pre>
-```obj``` and ```objend``` |  | Makes program counter believe it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
+```obj``` and ```objend``` | ```phase``` and ```dephase``` | Makes program counter believe it's at an address, without actually going there. | <pre lang="asm">obj $100&#13;dc.l * ; writes dc.l $100 to current location&#13;objend</pre>
 || ```align``` | Align to value. | <pre lang="asm">dc.b 1,2,3&#13;align 2 ; same as dc.b 1,2,3,0</pre>
 
 # Conditionals
